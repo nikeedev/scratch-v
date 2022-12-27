@@ -12,7 +12,7 @@ websocket.onerror = (event) => {
 
 let input_data = document.getElementById("input-data"), send_button = document.getElementById("send-button"), project_id_used = document.getElementById("project-id-used");
 
-const project_id = 777954330;
+
 
 websocket.onopen = (event) => {
     console.log("Connection open");
@@ -29,14 +29,14 @@ websocket.onopen = (event) => {
         websocket.send(JSON.stringify({ "method": "set", "project_id": project_id, "user": "nikeedev", "name": "☁ cloud", "value": 7 }));
     }, 500);
 
-    
+
     setInterval(() => {
         send_button.onclick = (event) => {
             websocket.send(JSON.stringify({ "method": "set", "project_id": project_id, "user": "nikeedev", "name": "☁ cloud", "value": input_data.value }));
             console.log("Value " + input_data.value + " sent");
         }
     }, 1000);
-    
+
 
     console.log("Sent the message");
 
@@ -44,7 +44,7 @@ websocket.onopen = (event) => {
 
 websocket.onmessage = (event) => {
     console.log(event);
-    
+
     setInterval(() => {
         console.log("Receiving messages:", event.data);
     }, 1000);
