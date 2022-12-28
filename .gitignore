@@ -1,6 +1,6 @@
 # Binaries for programs and plugins
-main
-websocket-scratch
+mainv
+scratch-v
 *.exe
 *.exe~
 *.so
