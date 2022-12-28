@@ -4,7 +4,7 @@ import net.websocket
 import term
 import time
 import json
-
+import os
 
 // https://turbowarp.org/777954330
 
@@ -50,11 +50,12 @@ fn create_message(var_action string, var_name string, var_value int, data Data) 
 // Message: { "method": "set", "user": "nikeedev", "project_id": project_id, "name": "☁ cloud", "value": input_data.value }
 
 fn main() {
+
 	println('Link to project: https://turbowarp.org/777954330')
 	data := Data{'nikeedev', 777954330}
 
-	println(json.encode(create_handshake(data)))
-	println(json.encode(create_message('set', '☁ cloud', 7, data)))
+	// println(json.encode(create_handshake(data)))
+	// println(json.encode(create_message('set', '☁ cloud', num, data)))
 
 
 	mut ws := start_client()!
@@ -64,8 +65,19 @@ fn main() {
 	ws.write_string(json.encode(create_handshake(data)))!
 	time.sleep(1000)
 	println("Handshake completed")
-	ws.write_string(json.encode(create_message('set', '☁ cloud', 7, data)))!
-	println('Message sent to server')
+
+
+	for {
+		println('Write a number to send to ${data.project_id}...')
+		mut num := os.get_line()
+		if num == '' {
+			break
+		}
+		ws.write_string(json.encode(create_message('set', '☁ cloud', num.int(), data)))!
+		println('Message "${num}" sent to server')
+	}
+
+
 
 	ws.close(1000, 'normal') or { println(term.red('panicing ${err}')) }
 	unsafe {
