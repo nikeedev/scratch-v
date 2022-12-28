@@ -23,8 +23,8 @@ struct Message {
 	method string
 	user string
 	project_id int
-	var_name string
-	var_value int
+	name string
+	value int
 }
 
 fn create_handshake(data Data) Handshake {
@@ -50,7 +50,7 @@ fn create_message(var_action string, var_name string, var_value int, data Data) 
 // Message: { "method": "set", "user": "nikeedev", "project_id": project_id, "name": "☁ cloud", "value": input_data.value }
 
 fn main() {
-
+	println('Link to project: https://turbowarp.org/777954330')
 	data := Data{'nikeedev', 777954330}
 
 	println(json.encode(create_handshake(data)))
@@ -60,13 +60,12 @@ fn main() {
 	mut ws := start_client()!
 
 	println(term.green('client ${ws.id} ready'))
-	println('Write message and enter to send...')
 
 	ws.write_string(json.encode(create_handshake(data)))!
 	time.sleep(1000)
-
+	println("Handshake completed")
 	ws.write_string(json.encode(create_message('set', '☁ cloud', 7, data)))!
-
+	println('Message sent to server')
 
 	ws.close(1000, 'normal') or { println(term.red('panicing ${err}')) }
 	unsafe {
