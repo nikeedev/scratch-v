@@ -1,12 +1,10 @@
-# Websocket code for Turbowarp websocket connection translated to V
-**It is currently under development**
+# Websocket code for Turbowarp websocket connection translated to V!
 
 ## Running the file
 
-Run this [main.v](main.v)
-
+Run this [scratch-v.v](scratch-v.v) file:
 ```bash
-v run .
+v run scratch-v.v
 ```
 
 -------------
