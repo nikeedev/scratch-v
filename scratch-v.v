@@ -105,7 +105,7 @@ fn start_client() !&websocket.Client {
 	ws.on_message(fn (mut ws websocket.Client, msg &websocket.Message) ! {
 		if msg.payload.len > 0 {
 			message := msg.payload.bytestr()
-			println(term.blue('Message recieved: ${message}'))
+			println(term.blue('Message recieved: ${json.decode(Message, message)}'))
 		}
 	})
 
