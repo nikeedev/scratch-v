@@ -14,28 +14,22 @@ struct Data {
 }
 
 struct Handshake {
-	method string
-	user string
-	project_id int
+	method string = 'handshake'
+ 	Data
 }
 
 struct Message {
 	method string
-	user string
-	project_id int
+	Data
 	name string
-	value int
+	value f64
 }
 
 fn create_handshake(data Data) Handshake {
-	return Handshake{
-		"handshake",
-		data.user,
-		data.project_id
-	}
+	return Handshake{Data: data}
 }
 
-fn create_message(var_action string, var_name string, var_value int, data Data) Message {
+fn create_message(var_action string, var_name string, var_value f64, data Data) Message {
 	return Message{
 		var_action
 		data.user,
@@ -73,7 +67,7 @@ fn main() {
 		if num == '' {
 			break
 		}
-		ws.write_string(json.encode(create_message('set', '☁ cloud', num.int(), data)))!
+		ws.write_string(json.encode(create_message('set', '☁ cloud', num.f64(), data)))!
 		println('Message "${num}" sent to server')
 	}
 
@@ -88,7 +82,7 @@ fn main() {
 
 
 fn start_client() !&websocket.Client {
-	mut ws := websocket.new_client('wss://clouddata.turbowarp.org/')!
+	mut ws := websocket.new_client('wss://clouddata.scratch.mit.edu/')!
 
 	ws.on_open(fn (mut ws websocket.Client) ! {
 		println(term.green('websocket connected to the turbowarp server and ready to send messages...'))
