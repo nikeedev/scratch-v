@@ -14,26 +14,25 @@ struct Data {
 }
 
 struct Handshake {
-	method string = 'handshake'
  	Data
+	method string = 'handshake'
 }
 
 struct Message {
-	method string
 	Data
+	method string
 	name string
 	value f64
 }
 
 fn create_handshake(data Data) Handshake {
-	return Handshake{Data: data}
+	return Handshake{data, 'handshake'}
 }
 
 fn create_message(var_action string, var_name string, var_value f64, data Data) Message {
 	return Message{
+		data
 		var_action
-		data.user,
-		data.project_id,
 		var_name,
 		var_value
 	}
@@ -83,7 +82,10 @@ fn main() {
 
 fn start_client() !&websocket.Client {
 	mut ws := websocket.new_client('wss://clouddata.scratch.mit.edu/')!
-    ws.header.add_custom("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 16_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/108.0.5359.112 Mobile/15E148 Safari/604.1")
+
+	ws.header.add_custom("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36")!
+
+
 	ws.on_open(fn (mut ws websocket.Client) ! {
 		println(term.green('websocket connected to the turbowarp server and ready to send messages...'))
 	})
