@@ -83,7 +83,7 @@ fn main() {
 
 fn start_client() !&websocket.Client {
 	mut ws := websocket.new_client('wss://clouddata.scratch.mit.edu/')!
-
+        ws.header.add_custom("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 16_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/108.0.5359.112 Mobile/15E148 Safari/604.1")
 	ws.on_open(fn (mut ws websocket.Client) ! {
 		println(term.green('websocket connected to the turbowarp server and ready to send messages...'))
 	})
