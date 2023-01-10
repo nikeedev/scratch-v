@@ -84,6 +84,12 @@ fn start_client() !&websocket.Client {
 	mut ws := websocket.new_client('wss://clouddata.scratch.mit.edu/')!
 
 	ws.header.add_custom("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36")!
+	ws.header.add_custom("Host", "clouddata.scratch.mit.edu")!
+	ws.header.add_custom("Origin", "https://scratch.mit.edu")!
+	ws.header.add_custom("Accept-Encoding", "gzip, deflate, br")!
+	ws.header.add_custom("Accept-Language", "nb-NO,nb;q=0.9,no;q=0.8,nn;q=0.7,en-US;q=0.6,en;q=0.5,de;q=0.4,de-DE;q=0.3")!
+	ws.header.add_custom("Upgrade", "websocket")!
+	ws.header.add_custom("Connection", "Upgrade")!
 
 
 	ws.on_open(fn (mut ws websocket.Client) ! {
