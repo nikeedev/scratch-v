@@ -14,24 +14,27 @@ struct Data {
 }
 
 struct Handshake {
- 	Data
+ 	user    string
+	project_id int
 	method string = 'handshake'
 }
 
 struct Message {
-	Data
+	user    string
+	project_id int
 	method string
 	name string
 	value f64
 }
 
 fn create_handshake(data Data) Handshake {
-	return Handshake{data, 'handshake'}
+	return Handshake{data.user, data.project_id, 'handshake'}
 }
 
 fn create_message(var_action string, var_name string, var_value f64, data Data) Message {
 	return Message{
-		data
+		data.user
+		data.project_id
 		var_action
 		var_name,
 		var_value
@@ -54,6 +57,9 @@ fn main() {
 	mut ws := start_client()!
 
 	println(term.green('client ${ws.id} ready'))
+
+	println(json.encode(create_handshake(data)))
+	println("")
 
 	ws.write_string(json.encode(create_handshake(data)))!
 	time.sleep(1000)
@@ -81,28 +87,26 @@ fn main() {
 
 
 fn start_client() !&websocket.Client {
-	mut ws := websocket.new_client('wss://clouddata.scratch.mit.edu/')!
+	mut ws := websocket.new_client('wss://clouddata.turbowarp.org/')!
 
-	ws.header.add_custom("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36")!
-	ws.header.add_custom("Host", "clouddata.scratch.mit.edu")!
-	ws.header.add_custom("Origin", "https://scratch.mit.edu")!
-	ws.header.add_custom("Accept-Encoding", "gzip, deflate, br")!
-	ws.header.add_custom("Accept-Language", "nb-NO,nb;q=0.9,no;q=0.8,nn;q=0.7,en-US;q=0.6,en;q=0.5,de;q=0.4,de-DE;q=0.3")!
-	ws.header.add_custom("Upgrade", "websocket")!
-	ws.header.add_custom("Connection", "Upgrade")!
-
+	ws.header.add_custom("User-Agent", "scratch-v/0.1.0 scratch.mit.edu/users/nikeedev")!
+	ws.header.add_custom("Host", "clouddata.turbowarp.org")!
+	ws.header.add_custom("Origin", "https://turbowarp.org")!
 
 	ws.on_open(fn (mut ws websocket.Client) ! {
 		println(term.green('websocket connected to the turbowarp server and ready to send messages...'))
 	})
+
 	// use on_error_ref if you want to send any reference object
 	ws.on_error(fn (mut ws websocket.Client, err string) ! {
 		println(term.red('error: ${err}'))
 	})
+
 	// use on_close_ref if you want to send any reference object
 	ws.on_close(fn (mut ws websocket.Client, code int, reason string) ! {
 		println(term.green('the connection to the server successfully closed'))
 	})
+
 	// on new messages from other clients, display them in blue text
 	ws.on_message(fn (mut ws websocket.Client, msg &websocket.Message) ! {
 		if msg.payload.len > 0 {
