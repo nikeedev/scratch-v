@@ -40,7 +40,7 @@ fn create_message(var_action string, var_name string, var_value f64, data Data) 
 // Message: { "method": "set", "user": "nikeedev", "project_id": project_id, "name": "☁ cloud", "value": input_data.value }
 
 fn main() {
-	println('Link to project: https://turbowarp.org/777954330')
+	println(term.magenta('Link to project: https://turbowarp.org/777954330'))
 	data := Data{'nikeedev', 777954330}
 
 	// println(json.encode(create_handshake(data)))
