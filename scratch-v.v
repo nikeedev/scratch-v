@@ -9,36 +9,30 @@ import os
 // https://turbowarp.org/777954330
 
 struct Data {
-	user    string
-	project_id int
+    user       string
+    project_id int
 }
 
 struct Handshake {
- 	user    string
-	project_id int
-	method string = 'handshake'
+	user       string
+    project_id int
+    method     string = 'handshake'
 }
 
 struct Message {
-	user    string
-	project_id int
-	method string
-	name string
-	value f64
+    user       string
+    project_id int
+    method     string
+    name       string
+    value      f64
 }
 
 fn create_handshake(data Data) Handshake {
-	return Handshake{data.user, data.project_id, 'handshake'}
+    return Handshake{data.user, data.project_id, 'handshake'}
 }
 
 fn create_message(var_action string, var_name string, var_value f64, data Data) Message {
-	return Message{
-		data.user
-		data.project_id
-		var_action
-		var_name,
-		var_value
-	}
+    return Message{data.user, data.project_id, var_action, var_name, var_value}
 }
 
 // Handshake: { "method": "handshake", "user": "nikeedev", "project_id": project_id }
@@ -46,25 +40,22 @@ fn create_message(var_action string, var_name string, var_value f64, data Data) 
 // Message: { "method": "set", "user": "nikeedev", "project_id": project_id, "name": "☁ cloud", "value": input_data.value }
 
 fn main() {
-
 	println('Link to project: https://turbowarp.org/777954330')
 	data := Data{'nikeedev', 777954330}
 
 	// println(json.encode(create_handshake(data)))
 	// println(json.encode(create_message('set', '☁ cloud', num, data)))
 
-
 	mut ws := start_client()!
 
 	println(term.green('client ${ws.id} ready'))
 
 	println(json.encode(create_handshake(data)))
-	println("")
+	println('')
 
 	ws.write_string(json.encode(create_handshake(data)))!
 	time.sleep(1000)
-	println("Handshake completed")
-
+	println('Handshake completed')
 
 	for {
 		println('Write a number to send to ${data.project_id}...')
@@ -76,22 +67,18 @@ fn main() {
 		println('Message "${num}" sent to server')
 	}
 
-
-
 	ws.close(1000, 'normal') or { println(term.red('panicing ${err}')) }
 	unsafe {
 		ws.free()
 	}
-
 }
-
 
 fn start_client() !&websocket.Client {
 	mut ws := websocket.new_client('wss://clouddata.turbowarp.org/')!
 
-	ws.header.add_custom("User-Agent", "scratch-v/0.1.0 scratch.mit.edu/users/nikeedev")!
-	ws.header.add_custom("Host", "clouddata.turbowarp.org")!
-	ws.header.add_custom("Origin", "https://turbowarp.org")!
+	ws.header.add_custom('User-Agent', 'scratch-v/0.1.0 scratch.mit.edu/users/nikeedev')!
+	ws.header.add_custom('Host', 'clouddata.turbowarp.org')!
+	ws.header.add_custom('Origin', 'https://turbowarp.org')!
 
 	ws.on_open(fn (mut ws websocket.Client) ! {
 		println(term.green('websocket connected to the turbowarp server and ready to send messages...'))
@@ -115,9 +102,11 @@ fn start_client() !&websocket.Client {
 		}
 	})
 
-	ws.connect() or { println(term.red('error on connect: ${err}')) }
+	ws.connect() or {
+		eprintln(term.red('ws.connect error: ${err}'))
+		return err
+	}
 
 	spawn ws.listen() // or { println(term.red('error on listen $err')) }
 	return ws
 }
-
