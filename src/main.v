@@ -1,12 +1,28 @@
 module main
 
 import net.websocket
+import net.http
 import term
 import time
 import json
 import os
 
-// https://turbowarp.org/777954330
+
+
+/// For Authentication
+
+struct User {
+	username  string
+	password  string
+}
+
+const (
+	user = User{username: "___22___", password: "___11___"}
+)
+
+///
+
+// https://scratch.mit.edu/777954330
 
 const project_id = 777954330
 
@@ -55,9 +71,39 @@ fn create_handshake(data Data) Handshake {
 
 // Message: { "method": "set", "name": "☁ cloud", "value": input_data.value }
 
+
+struct MyCookie {
+mut:
+	cookie http.Cookie
+}
+
+__global(
+	my_cookie = MyCookie{}
+)
+
 fn main() {
-	println(term.magenta('Link to project: https://turbowarp.org/${project_id}'))
-	data := Data{'nikeedev', project_id}
+
+	mut conf := http.FetchConfig{
+		url: 'https://scratch.mit.edu/login/'
+		data: json.encode(user)
+		method: .post
+	}
+	conf.cookies['scratchcsrftoken'] = 'a'
+
+	conf.header.add_custom('X-Requested-With', 'XMLHttpRequest') !
+    conf.header.add_custom('X-CSRFToken', 'a') !
+	conf.header.add_custom('Referer', 'https://scratch.mit.edu') !
+	// conf.header.add_custom('Cookie', 'scratchcsrftoken=a;') !
+	conf.header.add_custom('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36') !
+	conf.header.add_custom('content_type', 'application/json') !
+
+	mut response := http.fetch(conf) !
+
+	my_cookie.cookie = response.cookies()[0]
+	println(my_cookie.cookie.value)
+
+	println(term.magenta('Link to project: https://scratch.mit.edu/projects/${project_id}'))
+	data := Data{'___22___', project_id}
 
 	// println(json.encode(create_handshake(data)))
 	// println(json.encode(create_message('set', '☁ cloud', num, data)))
@@ -140,10 +186,15 @@ fn main() {
 	}
 }
 
-fn start_client() !&websocket.Client {
-	mut ws := websocket.new_client('wss://clouddata.turbowarp.org/')!
 
-	ws.header.add_custom('User-Agent', 'scratch-v/0.1.0 scratch.mit.edu/users/nikeedev')!
+
+
+fn start_client() !&websocket.Client {
+	mut ws := websocket.new_client('wss://clouddata.scratch.mit.edu/')!
+
+	ws.header.add_custom('cookie', 'scratchsessionsid=${my_cookie.cookie.value};') !
+	ws.header.add_custom('User-Agent', 'scratch-v/0.1.0 scratch.mit.edu/users/nikeedev') !
+	ws.header.add_custom('origin', 'https://scratch.mit.edu') !
 
 	ws.on_open(fn (mut ws websocket.Client) ! {
 		println(term.green('websocket connected to the turbowarp server and ready to send messages...'))
@@ -175,3 +226,6 @@ fn start_client() !&websocket.Client {
 	spawn ws.listen() // or { println(term.red('error on listen $err')) }
 	return ws
 }
+
+
+
