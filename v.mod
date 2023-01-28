@@ -3,5 +3,7 @@ Module {
 	description: ''
 	version: '0.1.0'
 	license: ''
-	dependencies: []
+	dependencies: [
+		"zztkm.vdotenv"
+	]
 }

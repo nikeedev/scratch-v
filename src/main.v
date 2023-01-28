@@ -6,25 +6,23 @@ import term
 import time
 import json
 import os
+import zztkm.vdotenv
 
 
 
 /// For Authentication
 
 struct User {
+mut:
 	username  string
 	password  string
 }
-
-const (
-	user = User{username: "___22___", password: "___11___"}
-)
 
 ///
 
 // https://scratch.mit.edu/777954330
 
-const project_id = 794830614
+const project_id = 777954330
 
 struct Data {
 	user       string
@@ -82,7 +80,8 @@ __global(
 )
 
 fn main() {
-
+	vdotenv.load()
+	user := User{username: os.getenv("USERNAME"), password: os.getenv("PASSWORD")}
 	mut conf := http.FetchConfig{
 		url: 'https://scratch.mit.edu/login/'
 		data: json.encode(user)

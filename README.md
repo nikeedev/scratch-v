@@ -1,14 +1,22 @@
-# Websocket code for Turbowarp websocket connection translated to V!
+# Websocket code for Scratch and Turbowarp websocket connection translated to V!
+
+**Before running the file, create a `.env` file inside `src/` folder, which has following contents:**
+```
+USERNAME="your_scratch_username"
+PASSWORD="your_scratch_password"
+```
+
+so that it can authenticate your user who connects to the project, otherwise scratch rejects the connection to their server.
 
 ## Running the file
 
-Run this [scratch-v.v](scratch-v.v) file:
+Run this [scratch-v.v](src/main.v) file:
 ```bash
-v run scratch-v.v
+v run .
 ```
 
 -------------
- 
- If you don't have V installed, download v compiler here: [https://github.com/vlang/v](https://github.com/vlang/v)
+
+If you don't have V installed, download v compiler here: [https://github.com/vlang/v](https://github.com/vlang/v)
 
 
