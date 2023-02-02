@@ -1,5 +1,3 @@
-module main
-
 import net.websocket
 import net.http
 import term
@@ -118,70 +116,14 @@ fn main() {
 	println(json.encode(create_handshake(data)))
 	println('')
 
-	ws.write_string(json.encode(create_handshake(data)))!
+	ws.write_string(json.encode(create_handshake(data))) !
 	time.sleep(1000)
 	println('Handshake completed')
 
-	for {
-		mut num := f64(0)
-		mut name := ''
 
-		print('Name of the variable thats getting affected: ')
-		mut var_name := '☁ ' + os.get_line().str()
-		println('')
+	ws.write_string(json.encode(Set{'set', data.project_id, '☁ cloud', 56}))!
+	println('Sat ☁ cloud to 56')
 
-		print('Task to do to ${var_name} (set, create, rename, or delete): ')
-		mut task := os.get_line().str().trim_space().to_lower()
-		println('')
-
-		if task == 'set' || task == 'create' {
-			print('What number to set on ${var_name}? ')
-			num = os.get_line().f64()
-		}
-
-		else if task == 'rename' {
-			print('What name to set on ${var_name}? ')
-			name = os.get_line().str()
-			if name == '' {
-				name = var_name
-			}
-			else {
-				continue
-			}
-		}
-
-		match task {
-			'set' {
-				ws.write_string(json.encode(Set{'set', data.project_id, var_name, num}))!
-				println('Sat ${var_name} to ${num}')
-			}
-			'create' {
-				ws.write_string(json.encode(Create{'create', data.project_id, var_name, num}))!
-				println('Created variable ${var_name} with value ${num}')
-			}
-			'rename' {
-				ws.write_string(json.encode(Rename{'rename', data.project_id, var_name, name}))!
-				println('Renamed ${var_name} to ${num}')
-			}
-			'delete' {
-				print('Are you sure you want to delete the $var_name variable? ')
-				mut sure := os.get_line().str().trim_space().to_lower()
-				if sure == 'yes' || sure == 'y' {
-					ws.write_string(json.encode(Delete{'delete', data.project_id, var_name}))!
-					println('Deleted ${var_name}')
-				}
-				else {
-					continue
-				}
-			}
-			else {
-				continue
-			}
-		}
-		name = ""
-		var_name = ""
-		num = 0
-	}
 
 	ws.close(1000, 'normal') or { println(term.red('panicing ${err}')) }
 	unsafe {
@@ -197,7 +139,7 @@ fn start_client() !&websocket.Client {
 
 	ws.header.add_custom('cookie', 'scratchsessionsid=${my_cookie.cookie.value};') !
 	ws.header.add_custom('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36') !
-	ws.header.add_custom('origin', 'https://scratch.mit.edu') !
+	ws.header.add_custom('Origin', 'https://scratch.mit.edu') !
 
 	ws.on_open(fn (mut ws websocket.Client) ! {
 		println(term.green('websocket connected to the turbowarp server and ready to send messages...'))
