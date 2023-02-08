@@ -106,7 +106,7 @@ fn main() {
 	println(my_cookie.cookie.value)
 
 	println(term.magenta('Link to project: https://scratch.mit.edu/projects/${project_id}'))
-	data := Data{'___22___', project_id}
+	data := Data{'nikeedev', project_id}
 
 	// println(json.encode(create_handshake(data)))
 	// println(json.encode(create_message('set', '☁ cloud', num, data)))
