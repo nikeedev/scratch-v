@@ -1,6 +1,6 @@
 # Websocket code for Scratch and Turbowarp websocket connection translated to V!
 
-**Before running the file, create a `.env` file inside the root folder of this repo, which has following contents:**
+**Before running the file, create a `.env` file inside the src folder of this repo, which has following contents:**
 ```
 USERNAMEenv="your_scratch_username"
 PASSWORDenv="your_scratch_password"
