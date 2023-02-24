@@ -98,7 +98,7 @@ fn main() {
 	conf.header.add_custom('Referer', 'https://scratch.mit.edu') !
 	// conf.header.add_custom('Cookie', 'scratchcsrftoken=a;') !
 	conf.header.add_custom('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36') !
-	conf.header.add_custom('content_type', 'application/json') !
+	conf.header.add_custom('Content-Type', 'application/json') !
 
 	mut response := http.fetch(conf) !
 	println(response)
@@ -193,11 +193,10 @@ fn main() {
 
 
 fn start_client() !&websocket.Client {
-	mut ws := websocket.new_client('wss://clouddata.scratch.mit.edu/')!
+	mut ws := websocket.new_client('wss://clouddata.turbowarp.org/')!
 
-	ws.header.add_custom('cookie', 'scratchsessionsid=${my_cookie.cookie.value};') !
-	ws.header.add_custom('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36') !
-	ws.header.add_custom('origin', 'https://scratch.mit.edu') !
+	// ws.header.add_custom('cookie', 'scratchsessionsid=${my_cookie.cookie.value};') !
+	// ws.header.add_custom('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36') !
 
 	ws.on_open(fn (mut ws websocket.Client) ! {
 		println(term.green('websocket connected to the turbowarp server and ready to send messages...'))
