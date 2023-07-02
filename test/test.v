@@ -20,7 +20,7 @@ mut:
 
 // https://scratch.mit.edu/777954330
 
-const project_id = 777954330
+const project_id = 859836142
 
 struct Data {
 	user       string
@@ -69,7 +69,7 @@ fn create_handshake(data Data) Handshake {
 
 // Handshake: { "method": "handshake", "user": "nikeedev", "project_id": project_id }
 
-// Message: { "method": "set", "name": "☁ cloud", "value": input_data.value }
+// Message: { "method": "set", "name": "☁ message", "value": input_data.value }
 
 
 struct MyCookie {
@@ -107,7 +107,7 @@ fn main() {
 	data := Data{'nikeedev', project_id}
 
 	// println(json.encode(create_handshake(data)))
-	// println(json.encode(create_message('set', '☁ cloud', num, data)))
+	// println(json.encode(create_message('set', '☁ message', num, data)))
 
 	mut ws := start_client() !
 
@@ -121,8 +121,8 @@ fn main() {
 	println('Handshake completed')
 
 
-	ws.write_string(json.encode(Set{'set', data.project_id, '☁ cloud', 56}))!
-	println('Sat ☁ cloud to 56')
+	ws.write_string(json.encode(Set{'set', data.project_id, '☁ message', 56}))!
+	println('Sat ☁ message to 56')
 
 
 	ws.close(1000, 'normal') or { println(term.red('panicing ${err}')) }

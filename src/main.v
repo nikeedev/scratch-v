@@ -8,8 +8,6 @@ import json
 import os
 import zztkm.vdotenv
 
-
-
 /// For Authentication
 
 struct User {
@@ -20,9 +18,9 @@ mut:
 
 ///
 
-// https://scratch.mit.edu/777954330
+// https://scratch.mit.edu/projects/859836142
 
-const project_id = 777954330
+const project_id = 859836142
 
 struct Data {
 	user       string
@@ -42,26 +40,6 @@ struct Set {
 	value  f64
 }
 
-struct Create {
-	method string
-	project_id int
-	name   string
-	value  f64
-}
-
-struct Rename {
-	method   string
-	project_id int
-	name     string
-	new_name string
-}
-
-struct Delete {
-	method string
-	project_id int
-	name   string
-}
-
 fn create_handshake(data Data) Handshake {
 	return Handshake{
 		user: data.user
@@ -71,7 +49,7 @@ fn create_handshake(data Data) Handshake {
 
 // Handshake: { "method": "handshake", "user": "nikeedev", "project_id": project_id }
 
-// Message: { "method": "set", "name": "☁ cloud", "value": input_data.value }
+// Message: { "method": "set", "name": "☁ message", "value": input_data.value }
 
 
 struct MyCookie {
@@ -86,13 +64,15 @@ __global(
 fn main() {
 	vdotenv.load()
 	user := User{username: os.getenv("USERNAMEenv"), password: os.getenv("PASSWORDenv")}
+
+
 	mut conf := http.FetchConfig{
 		url: 'https://scratch.mit.edu/login/'
 		data: json.encode(user)
 		method: .post
 	}
-	conf.cookies['scratchcsrftoken'] = 'a'
 
+	conf.cookies['scratchcsrftoken'] = 'a'
 	conf.header.add_custom('X-Requested-With', 'XMLHttpRequest') !
     conf.header.add_custom('X-CSRFToken', 'a') !
 	conf.header.add_custom('Referer', 'https://scratch.mit.edu') !
@@ -109,7 +89,7 @@ fn main() {
 	data := Data{'nikeedev', project_id}
 
 	// println(json.encode(create_handshake(data)))
-	// println(json.encode(create_message('set', '☁ cloud', num, data)))
+	// println(json.encode(create_message('set', '☁ message', num, data)))
 
 	mut ws := start_client() !
 
@@ -122,66 +102,17 @@ fn main() {
 	time.sleep(1000)
 	println('Handshake completed')
 
-	for {
-		mut num := f64(0)
-		mut name := ''
+	mut num := f64(6)
+	mut name := '☁ message'
 
-		print('Name of the variable thats getting affected: ')
-		mut var_name := '☁ ' + os.get_line().str()
-		println('')
 
-		print('Task to do to ${var_name} (set, create, rename, or delete): ')
-		mut task := os.get_line().str().trim_space().to_lower()
-		println('')
-
-		if task == 'set' || task == 'create' {
-			print('What number to set on ${var_name}? ')
-			num = os.get_line().f64()
-		}
-
-		else if task == 'rename' {
-			print('What name to set on ${var_name}? ')
-			name = os.get_line().str()
-			if name == '' {
-				name = var_name
-			}
-			else {
-				continue
-			}
-		}
-
-		match task {
-			'set' {
-				ws.write_string(json.encode(Set{'set', data.project_id, var_name, num}))!
-				println('Sat ${var_name} to ${num}')
-			}
-			'create' {
-				ws.write_string(json.encode(Create{'create', data.project_id, var_name, num}))!
-				println('Created variable ${var_name} with value ${num}')
-			}
-			'rename' {
-				ws.write_string(json.encode(Rename{'rename', data.project_id, var_name, name}))!
-				println('Renamed ${var_name} to ${num}')
-			}
-			'delete' {
-				print('Are you sure you want to delete the $var_name variable? ')
-				mut sure := os.get_line().str().trim_space().to_lower()
-				if sure == 'yes' || sure == 'y' {
-					ws.write_string(json.encode(Delete{'delete', data.project_id, var_name}))!
-					println('Deleted ${var_name}')
-				}
-				else {
-					continue
-				}
-			}
-			else {
-				continue
-			}
-		}
-		name = ""
-		var_name = ""
-		num = 0
-	}
+	ws.write_string(json.encode(Set {
+			method: 'set',
+			project_id: data.project_id,
+			name: name,
+			value: num
+	}))!
+	println("Sent message!")
 
 	ws.close(1000, 'normal') or { println(term.red('panicing ${err}')) }
 	unsafe {
@@ -193,10 +124,10 @@ fn main() {
 
 
 fn start_client() !&websocket.Client {
-	mut ws := websocket.new_client('wss://clouddata.turbowarp.org/')!
+	mut ws := websocket.new_client('wss://clouddata.scratch.mit.edu/')!
 
-	// ws.header.add_custom('cookie', 'scratchsessionsid=${my_cookie.cookie.value};') !
-	// ws.header.add_custom('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36') !
+	ws.header.add_custom('Cookie', 'scratchsessionsid=${my_cookie.cookie.value};') !
+	ws.header.add_custom('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36') !
 
 	ws.on_open(fn (mut ws websocket.Client) ! {
 		println(term.green('websocket connected to the turbowarp server and ready to send messages...'))
